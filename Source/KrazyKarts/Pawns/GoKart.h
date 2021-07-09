@@ -54,6 +54,11 @@ private:
 	/** Current steering throw for rotation. */
 	float SteeringThrow;
 
+	/** Client MoveForward call version. */
+	void MoveForward(float Value);
+	/** Client MoveRight call version. */
+	void MoveRight(float Value);
+
 	/** Move kart forward - changes velocity based on specified Value. */
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_MoveForward(float Value);

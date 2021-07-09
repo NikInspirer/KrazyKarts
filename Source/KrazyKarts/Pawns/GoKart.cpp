@@ -2,6 +2,8 @@
 
 #include "GoKart.h"
 
+#include "DrawDebugHelpers.h"
+
 AGoKart::AGoKart()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -29,14 +31,29 @@ void AGoKart::Tick(float DeltaTime)
 
 	ApplyRotation(DeltaTime);
 	UpdateLocationFromVelocity(DeltaTime);
+
+	DrawDebugString(GetWorld(), FVector(0, 0, 100), UEnum::GetValueAsString(GetLocalRole()), this,
+	                FColor::White, DeltaTime);
 }
 
 void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	InputComponent->BindAxis("MoveForward", this, &AGoKart::Server_MoveForward);
-	InputComponent->BindAxis("MoveRight", this, &AGoKart::Server_MoveRight);
+	InputComponent->BindAxis("MoveForward", this, &AGoKart::MoveForward);
+	InputComponent->BindAxis("MoveRight", this, &AGoKart::MoveRight);
+}
+
+void AGoKart::MoveForward(float Value)
+{
+	Throttle = Value;
+	Server_MoveForward(Value);
+}
+
+void AGoKart::MoveRight(float Value)
+{
+	SteeringThrow = Value;
+	Server_MoveRight(Value);
 }
 
 void AGoKart::Server_MoveForward_Implementation(float Value)
