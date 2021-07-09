@@ -17,6 +17,7 @@ public:
 	//~ BEGIN AActor Interface
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	//~ END AActor Interface
 
 protected:
@@ -45,6 +46,14 @@ protected:
 	float MinTurningRadius;
 
 private:
+	/** Replicated Pawn Location value. */
+	UPROPERTY(Replicated)
+	FVector ReplicatedLocation;
+
+	/** Replicated Pawn Rotation value. */
+	UPROPERTY(Replicated)
+	FRotator ReplicatedRotation;
+	
 	/** Velocity of movement in 3D (m/s). */
 	FVector Velocity;
 	

@@ -3,10 +3,13 @@
 #include "GoKart.h"
 
 #include "DrawDebugHelpers.h"
+#include "Net/UnrealNetwork.h"
 
 AGoKart::AGoKart()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+
 	Mass = 1000.0f;
 	MaxDrivingForce = 10000.0f;
 	MinTurningRadius = 10;
@@ -32,6 +35,17 @@ void AGoKart::Tick(float DeltaTime)
 	ApplyRotation(DeltaTime);
 	UpdateLocationFromVelocity(DeltaTime);
 
+	if (HasAuthority())
+	{
+		ReplicatedLocation = GetActorLocation();
+		ReplicatedRotation = GetActorRotation();
+	}
+	else
+	{
+		SetActorLocation(ReplicatedLocation);
+		SetActorRotation(ReplicatedRotation);
+	}
+
 	DrawDebugString(GetWorld(), FVector(0, 0, 100), UEnum::GetValueAsString(GetLocalRole()), this,
 	                FColor::White, DeltaTime);
 }
@@ -42,6 +56,13 @@ void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	InputComponent->BindAxis("MoveForward", this, &AGoKart::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &AGoKart::MoveRight);
+}
+
+void AGoKart::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AGoKart, ReplicatedLocation)
+	DOREPLIFETIME(AGoKart, ReplicatedRotation)
 }
 
 void AGoKart::MoveForward(float Value)
