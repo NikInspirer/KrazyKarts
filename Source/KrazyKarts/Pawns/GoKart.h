@@ -55,10 +55,12 @@ private:
 	float SteeringThrow;
 
 	/** Move kart forward - changes velocity based on specified Value. */
-	void MoveForward(float Value);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_MoveForward(float Value);
 
 	/** Move kart right - changes steering throw based on specified Value. */
-	void MoveRight(float Value);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_MoveRight(float Value);
 
 	/** Calculate air resistance to car movement. */
 	FVector GetAirResistance() const;

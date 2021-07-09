@@ -35,18 +35,28 @@ void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	InputComponent->BindAxis("MoveForward", this, &AGoKart::MoveForward);
-	InputComponent->BindAxis("MoveRight", this, &AGoKart::MoveRight);
+	InputComponent->BindAxis("MoveForward", this, &AGoKart::Server_MoveForward);
+	InputComponent->BindAxis("MoveRight", this, &AGoKart::Server_MoveRight);
 }
 
-void AGoKart::MoveForward(float Value)
+void AGoKart::Server_MoveForward_Implementation(float Value)
 {
 	Throttle = Value;
 }
 
-void AGoKart::MoveRight(float Value)
+bool AGoKart::Server_MoveForward_Validate(float Value)
+{
+	return FMath::Abs(Value) <= 1.0f;
+}
+
+void AGoKart::Server_MoveRight_Implementation(float Value)
 {
 	SteeringThrow = Value;
+}
+
+bool AGoKart::Server_MoveRight_Validate(float Value)
+{
+	return FMath::Abs(Value) <= 1.0f;
 }
 
 FVector AGoKart::GetAirResistance() const
@@ -58,7 +68,7 @@ FVector AGoKart::GetRollingResistance() const
 {
 	const float AccelerationDueToGravity = -GetWorld()->GetGravityZ() / 100.0f;
 	const float NormalForce = Mass * AccelerationDueToGravity;
-	
+
 	return -Velocity.GetSafeNormal() * RollingResistanceCoefficient * NormalForce;
 }
 
