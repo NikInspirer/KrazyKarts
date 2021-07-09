@@ -51,12 +51,15 @@ private:
 	FTransform ReplicatedTransform;
 	
 	/** Velocity of movement in 3D (m/s). */
+	UPROPERTY(Replicated)
 	FVector Velocity;
 	
 	/** Current throttle value for movement. */
+	UPROPERTY(Replicated)
 	float Throttle;
 
 	/** Current steering throw for rotation. */
+	UPROPERTY(Replicated)
 	float SteeringThrow;
 
 	UFUNCTION()
