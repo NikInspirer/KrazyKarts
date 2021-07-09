@@ -41,4 +41,7 @@ private:
 
 	/** Move kart forward - changes velocity based on specified Value. */
 	void MoveForward(float Value);
+
+	/** Update location of the car based on current Velocity with collision detection. */
+	void UpdateLocationFromVelocity(float DeltaTime);
 };

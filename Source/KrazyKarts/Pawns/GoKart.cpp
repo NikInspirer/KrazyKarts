@@ -22,9 +22,7 @@ void AGoKart::Tick(float DeltaTime)
 	const FVector Acceleration = Force / Mass;
 
 	Velocity += Acceleration * DeltaTime;
-
-	const FVector WorldOffset = Velocity * 100 * DeltaTime;
-	AddActorWorldOffset(WorldOffset);
+	UpdateLocationFromVelocity(DeltaTime);
 }
 
 void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -37,4 +35,18 @@ void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AGoKart::MoveForward(float Value)
 {
 	Throttle = Value;
+}
+
+void AGoKart::UpdateLocationFromVelocity(float DeltaTime)
+{
+	const FVector WorldOffset = Velocity * 100 * DeltaTime;
+
+	FHitResult Hit;
+	AddActorWorldOffset(WorldOffset, true, &Hit);
+
+	// If collision was detected (like hitting a wall)
+	if (Hit.IsValidBlockingHit())
+	{
+		Velocity = FVector::ZeroVector;
+	}
 }
