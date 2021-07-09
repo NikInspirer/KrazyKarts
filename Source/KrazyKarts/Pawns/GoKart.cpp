@@ -20,12 +20,18 @@ AGoKart::AGoKart()
 void AGoKart::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	if (HasAuthority())
+	{
+		NetUpdateFrequency = 1;
+	}
 }
 
 void AGoKart::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	/* Simulate (on server and client). Sync is performed in OnRep_ReplicatedTransform(). */
 	FVector Force = GetActorForwardVector() * MaxDrivingForce * Throttle;
 	Force += GetAirResistance();
 
@@ -35,15 +41,10 @@ void AGoKart::Tick(float DeltaTime)
 	ApplyRotation(DeltaTime);
 	UpdateLocationFromVelocity(DeltaTime);
 
+	/* Set ReplicatedTransform if server. */
 	if (HasAuthority())
 	{
-		ReplicatedLocation = GetActorLocation();
-		ReplicatedRotation = GetActorRotation();
-	}
-	else
-	{
-		SetActorLocation(ReplicatedLocation);
-		SetActorRotation(ReplicatedRotation);
+		ReplicatedTransform = GetActorTransform();
 	}
 
 	DrawDebugString(GetWorld(), FVector(0, 0, 100), UEnum::GetValueAsString(GetLocalRole()), this,
@@ -61,8 +62,13 @@ void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AGoKart::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AGoKart, ReplicatedLocation)
-	DOREPLIFETIME(AGoKart, ReplicatedRotation)
+	DOREPLIFETIME(AGoKart, ReplicatedTransform)
+}
+
+void AGoKart::OnRep_ReplicatedTransform()
+{
+	/* Sync transform if server sent the one. */
+	SetActorTransform(ReplicatedTransform);
 }
 
 void AGoKart::MoveForward(float Value)

@@ -46,13 +46,9 @@ protected:
 	float MinTurningRadius;
 
 private:
-	/** Replicated Pawn Location value. */
-	UPROPERTY(Replicated)
-	FVector ReplicatedLocation;
-
-	/** Replicated Pawn Rotation value. */
-	UPROPERTY(Replicated)
-	FRotator ReplicatedRotation;
+	/** Replicated Pawn Transform value. */
+	UPROPERTY(ReplicatedUsing = OnRep_ReplicatedTransform)
+	FTransform ReplicatedTransform;
 	
 	/** Velocity of movement in 3D (m/s). */
 	FVector Velocity;
@@ -62,6 +58,9 @@ private:
 
 	/** Current steering throw for rotation. */
 	float SteeringThrow;
+
+	UFUNCTION()
+	void OnRep_ReplicatedTransform();
 
 	/** Client MoveForward call version. */
 	void MoveForward(float Value);
