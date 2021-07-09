@@ -7,7 +7,7 @@ AGoKart::AGoKart()
 	PrimaryActorTick.bCanEverTick = true;
 	Mass = 1000.0f;
 	MaxDrivingForce = 10000.0f;
-	MaxDegreesPerSecond = 90;
+	MinTurningRadius = 10;
 	DragCoefficient = 16;
 	RollingResistanceCoefficient = 0.015f;
 }
@@ -64,9 +64,12 @@ FVector AGoKart::GetRollingResistance() const
 
 void AGoKart::ApplyRotation(float DeltaTime)
 {
-	const float RotationAngle = MaxDegreesPerSecond * SteeringThrow * DeltaTime;
-	const FQuat RotationDelta(GetActorUpVector(), FMath::DegreesToRadians(RotationAngle));
+	const float DeltaLocation = FVector::DotProduct(GetActorForwardVector(), Velocity) * DeltaTime;
+	const float RotationAngle = DeltaLocation / MinTurningRadius * SteeringThrow;
+	const FQuat RotationDelta(GetActorUpVector(), RotationAngle);
+
 	Velocity = RotationDelta.RotateVector(Velocity);
+
 	AddActorWorldRotation(RotationDelta);
 }
 

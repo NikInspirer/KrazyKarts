@@ -40,9 +40,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Kart")
 	float MaxDrivingForce;
 
-	/** The number of degrees rotated per second at full control throw (degree/s). */
+	/** Minimum radius of the car turning circle at full lock (m). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Kart")
-	float MaxDegreesPerSecond;
+	float MinTurningRadius;
 
 private:
 	/** Velocity of movement in 3D (m/s). */
