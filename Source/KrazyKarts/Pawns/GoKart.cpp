@@ -5,6 +5,8 @@
 AGoKart::AGoKart()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	Mass = 1000.0f;
+	MaxDrivingForce = 10000.0f;
 }
 
 void AGoKart::BeginPlay()
@@ -15,6 +17,11 @@ void AGoKart::BeginPlay()
 void AGoKart::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	const FVector Force = GetActorForwardVector() * MaxDrivingForce * Throttle;
+	const FVector Acceleration = Force / Mass;
+
+	Velocity += Acceleration * DeltaTime;
 
 	const FVector WorldOffset = Velocity * 100 * DeltaTime;
 	AddActorWorldOffset(WorldOffset);
@@ -29,5 +36,5 @@ void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AGoKart::MoveForward(float Value)
 {
-	Velocity = GetActorForwardVector() * Value * 20;
+	Throttle = Value;
 }
