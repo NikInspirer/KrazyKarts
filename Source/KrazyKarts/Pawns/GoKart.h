@@ -32,6 +32,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Kart")
 	float MaxDrivingForce;
 
+	/** The number of degrees rotated per second at full control throw (degree/s). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Kart")
+	float MaxDegreesPerSecond;
+
 private:
 	/** Velocity of movement in 3D (m/s). */
 	FVector Velocity;
@@ -39,8 +43,14 @@ private:
 	/** Current throttle value for movement. */
 	float Throttle;
 
+	/** Current steering throw for rotation. */
+	float SteeringThrow;
+
 	/** Move kart forward - changes velocity based on specified Value. */
 	void MoveForward(float Value);
+
+	/** Move kart right - changes steering throw based on specified Value. */
+	void MoveRight(float Value);
 
 	/** Update location of the car based on current Velocity with collision detection. */
 	void UpdateLocationFromVelocity(float DeltaTime);
