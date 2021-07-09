@@ -9,6 +9,7 @@ AGoKart::AGoKart()
 	MaxDrivingForce = 10000.0f;
 	MaxDegreesPerSecond = 90;
 	DragCoefficient = 16;
+	RollingResistanceCoefficient = 0.015f;
 }
 
 void AGoKart::BeginPlay()
@@ -21,7 +22,7 @@ void AGoKart::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FVector Force = GetActorForwardVector() * MaxDrivingForce * Throttle;
-	Force += GetResistance();
+	Force += GetAirResistance();
 
 	const FVector Acceleration = Force / Mass;
 	Velocity += Acceleration * DeltaTime;
@@ -48,9 +49,17 @@ void AGoKart::MoveRight(float Value)
 	SteeringThrow = Value;
 }
 
-FVector AGoKart::GetResistance() const
+FVector AGoKart::GetAirResistance() const
 {
 	return -Velocity.GetSafeNormal() * Velocity.SizeSquared() * DragCoefficient;
+}
+
+FVector AGoKart::GetRollingResistance() const
+{
+	const float AccelerationDueToGravity = -GetWorld()->GetGravityZ() / 100.0f;
+	const float NormalForce = Mass * AccelerationDueToGravity;
+	
+	return -Velocity.GetSafeNormal() * RollingResistanceCoefficient * NormalForce;
 }
 
 void AGoKart::ApplyRotation(float DeltaTime)

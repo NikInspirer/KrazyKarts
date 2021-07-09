@@ -32,6 +32,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Kart")
 	float DragCoefficient;
 
+	/** Higher means more rolling resistance (kg/m). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Kart")
+	float RollingResistanceCoefficient;
+
 	/** The force applied to the car when the throttle is full down (N). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Kart")
 	float MaxDrivingForce;
@@ -56,8 +60,11 @@ private:
 	/** Move kart right - changes steering throw based on specified Value. */
 	void MoveRight(float Value);
 
-	/** Calculate world resistance to car movement. */
-	FVector GetResistance() const;
+	/** Calculate air resistance to car movement. */
+	FVector GetAirResistance() const;
+
+	/** Calculate rolling resistance to car movement. */
+	FVector GetRollingResistance() const;
 
 	/** Apply rotation to current Velocity. */
 	void ApplyRotation(float DeltaTime);
