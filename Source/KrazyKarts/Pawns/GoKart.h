@@ -87,16 +87,16 @@ private:
 	FVector Velocity;
 	
 	/** Current throttle value for movement. */
-	UPROPERTY(Replicated)
 	float Throttle;
 
 	/** Current steering throw for rotation. */
-	UPROPERTY(Replicated)
 	float SteeringThrow;
 
 	/** Handle replication of ServerState from server (on client). */
 	UFUNCTION()
 	void OnRep_ServerState();
+
+	void SimulateMove(FGoKartMove Move);
 
 	/** Client MoveForward call version. */
 	void MoveForward(float Value);
@@ -114,7 +114,7 @@ private:
 	FVector GetRollingResistance() const;
 
 	/** Apply rotation to current Velocity. */
-	void ApplyRotation(float DeltaTime);
+	void ApplyRotation(float InSteeringThrow, float InDeltaTime);
 	
 	/** Update location of the car based on current Velocity with collision detection. */
 	void UpdateLocationFromVelocity(float DeltaTime);
