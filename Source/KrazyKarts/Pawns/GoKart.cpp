@@ -64,6 +64,11 @@ void AGoKart::OnRep_ServerState()
 	Velocity = ServerState.Velocity;
 
 	ClearUnacknowledgedMoves(ServerState.LastMove);
+
+	for (const FGoKartMove& Move : UnacknowledgedMoves)
+	{
+		SimulateMove(Move);
+	}
 }
 
 FGoKartMove AGoKart::CreateMove(float DeltaTime) const
