@@ -31,13 +31,26 @@ void AGoKart::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Create FGoKartMove based on user inputs and send it to server ONLY if controlled by this peer
-	if (IsLocallyControlled())
+	// IF I'm client THEN move my pawn and send movement to server
+	if (GetLocalRole() == ROLE_AutonomousProxy)
 	{
 		const FGoKartMove Move = CreateMove(DeltaTime);
-		if (!HasAuthority()) { UnacknowledgedMoves.Add(Move); }
-		Server_SendMove(Move);
+		UnacknowledgedMoves.Add(Move);
 		SimulateMove(Move);
+		Server_SendMove(Move);
+	}
+
+	// IF I'm server and controlling pawn THEN move my pawn
+	if (GetLocalRole() == ROLE_Authority && IsLocallyControlled())
+	{
+		const FGoKartMove Move = CreateMove(DeltaTime);
+		Server_SendMove(Move);
+	}
+
+	// IF I'm just synchronized with server THEN simulate movement as it was on server
+	if (GetLocalRole() == ROLE_SimulatedProxy)
+	{
+		SimulateMove(ServerState.LastMove);
 	}
 
 	DrawDebugString(GetWorld(), FVector(0, 0, 100), UEnum::GetValueAsString(GetLocalRole()), this,
