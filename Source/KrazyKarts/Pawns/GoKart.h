@@ -79,12 +79,11 @@ protected:
 	float MinTurningRadius;
 
 private:
-	/** Replicated Pawn Transform value. */
-	UPROPERTY(ReplicatedUsing = OnRep_ReplicatedTransform)
-	FTransform ReplicatedTransform;
+	/** GoKart state from Server. */
+	UPROPERTY(ReplicatedUsing = OnRep_ServerState)
+	FGoKartState ServerState;
 	
 	/** Velocity of movement in 3D (m/s). */
-	UPROPERTY(Replicated)
 	FVector Velocity;
 	
 	/** Current throttle value for movement. */
@@ -95,21 +94,18 @@ private:
 	UPROPERTY(Replicated)
 	float SteeringThrow;
 
+	/** Handle replication of ServerState from server (on client). */
 	UFUNCTION()
-	void OnRep_ReplicatedTransform();
+	void OnRep_ServerState();
 
 	/** Client MoveForward call version. */
 	void MoveForward(float Value);
 	/** Client MoveRight call version. */
 	void MoveRight(float Value);
 
-	/** Move kart forward - changes velocity based on specified Value. */
+	/** Send to server GoKart move data. */
 	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_MoveForward(float Value);
-
-	/** Move kart right - changes steering throw based on specified Value. */
-	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_MoveRight(float Value);
+	void Server_SendMove(FGoKartMove Move);
 
 	/** Calculate air resistance to car movement. */
 	FVector GetAirResistance() const;
