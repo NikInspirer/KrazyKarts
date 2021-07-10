@@ -92,10 +92,15 @@ private:
 	/** Current steering throw for rotation. */
 	float SteeringThrow;
 
+	TArray<FGoKartMove> UnacknowledgedMoves;
+
 	/** Handle replication of ServerState from server (on client). */
 	UFUNCTION()
 	void OnRep_ServerState();
 
+	FGoKartMove CreateMove(float DeltaTime) const;
+	void ClearUnacknowledgedMoves(const FGoKartMove& LastMove);
+	
 	void SimulateMove(FGoKartMove Move);
 
 	/** Client MoveForward call version. */

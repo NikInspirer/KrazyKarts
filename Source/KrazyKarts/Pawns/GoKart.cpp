@@ -20,7 +20,7 @@ AGoKart::AGoKart()
 void AGoKart::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	if (HasAuthority())
 	{
 		NetUpdateFrequency = 1;
@@ -34,12 +34,8 @@ void AGoKart::Tick(float DeltaTime)
 	// Create FGoKartMove based on user inputs and send it to server ONLY if controlled by this peer
 	if (IsLocallyControlled())
 	{
-		FGoKartMove Move;
-		Move.DeltaTime = DeltaTime;
-		Move.SteeringThrow = SteeringThrow;
-		Move.Throttle = Throttle;
-		// TODO: Set time into Move
-
+		const FGoKartMove Move = CreateMove(DeltaTime);
+		if (!HasAuthority()) { UnacknowledgedMoves.Add(Move); }
 		Server_SendMove(Move);
 		SimulateMove(Move);
 	}
@@ -66,6 +62,32 @@ void AGoKart::OnRep_ServerState()
 {
 	SetActorTransform(ServerState.Transform);
 	Velocity = ServerState.Velocity;
+
+	ClearUnacknowledgedMoves(ServerState.LastMove);
+}
+
+FGoKartMove AGoKart::CreateMove(float DeltaTime) const
+{
+	FGoKartMove Move;
+	Move.DeltaTime = DeltaTime;
+	Move.SteeringThrow = SteeringThrow;
+	Move.Throttle = Throttle;
+	Move.Time = GetWorld()->TimeSeconds;
+
+	return Move;
+}
+
+void AGoKart::ClearUnacknowledgedMoves(const FGoKartMove& LastMove)
+{
+	TArray<FGoKartMove> NewMoves;
+	for (const FGoKartMove& Move : UnacknowledgedMoves)
+	{
+		if (LastMove.Time < Move.Time)
+		{
+			NewMoves.Add(Move);
+		}
+	}
+	UnacknowledgedMoves = NewMoves;
 }
 
 void AGoKart::SimulateMove(FGoKartMove Move)
