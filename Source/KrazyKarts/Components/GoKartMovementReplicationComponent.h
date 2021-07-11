@@ -40,7 +40,9 @@ protected:
 private:
 	UFUNCTION()
 	void OnRep_ServerState();
-	
+	void AutonomousProxy_OnRep_ServerState();
+	void SimulatedProxy_OnRep_ServerState();
+
 	/** Send to server GoKart move data. */
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_SendMove(FGoKartMove Move);
@@ -48,12 +50,19 @@ private:
 	void UpdateServerState(const FGoKartMove& Move);
 	void ClearUnacknowledgedMoves(const FGoKartMove& LastMove);
 
+	void ClientTick(float DeltaTime);
+
 	/** GoKart state from Server. */
 	UPROPERTY(ReplicatedUsing = OnRep_ServerState)
 	FGoKartState ServerState;
 
 	UPROPERTY()
 	UGoKartMovementComponent* MovementComponent;
+
+	float ClientTimeSinceUpdate;
+	float ClientTimeBetweenLastUpdates;
+	FTransform ClientStartTransform;
+	FVector ClientStartVelocity;
 
 	TArray<FGoKartMove> UnacknowledgedMoves;
 };
