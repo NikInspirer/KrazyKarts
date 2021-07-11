@@ -53,6 +53,9 @@ public:
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	UFUNCTION(BlueprintCallable)
+	void SetMeshOffsetRoot(USceneComponent* Root) { MeshOffsetRoot = Root; }
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -89,4 +92,7 @@ private:
 	FVector ClientStartVelocity;
 
 	TArray<FGoKartMove> UnacknowledgedMoves;
+
+	UPROPERTY()
+	USceneComponent* MeshOffsetRoot;
 };

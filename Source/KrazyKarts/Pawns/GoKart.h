@@ -25,14 +25,14 @@ protected:
 	//~ BEGIN AActor Interface
 	virtual void BeginPlay() override;
 	//~ END AActor Interface
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UGoKartMovementComponent* MovementComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UGoKartMovementReplicationComponent* ReplicationComponent;
 
 private:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
-	
-	UPROPERTY(VisibleAnywhere)
-	UGoKartMovementComponent* MovementComponent;
-
-	UPROPERTY(VisibleAnywhere)
-	UGoKartMovementReplicationComponent* ReplicationComponent;
 };
